@@ -18,8 +18,6 @@ const ProductDetails = lazy(() => import("./pages/ProductDetails"));
 const About = lazy(() => import("./pages/About"));
 const Contact = lazy(() => import("./pages/Contact"));
 const Gallery = lazy(() => import("./pages/Gallery"));
-const Checkout = lazy(() => import("./pages/Checkout"));
-const CheckoutCallback = lazy(() => import("./pages/CheckoutCallback"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Sales = lazy(() => import("./pages/Sales"));
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
@@ -91,8 +89,6 @@ const App = () => (
                         <Route path="/sales" element={<Sales />} />
                         <Route path="/about" element={<About />} />
                         <Route path="/contact" element={<Contact />} />
-                        <Route path="/checkout" element={<Checkout />} />
-                        <Route path="/checkout/callback" element={<CheckoutCallback />} />
                         <Route path="/admin/login" element={<AdminLogin />} />
                         <Route path="/admin" element={<ProtectedAdminRoute><AdminDashboard /></ProtectedAdminRoute>} />
                         <Route path="/admin/products" element={<ProtectedAdminRoute><AdminProducts /></ProtectedAdminRoute>} />

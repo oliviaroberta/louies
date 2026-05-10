@@ -97,7 +97,7 @@ const CartDrawer = () => {
                 </div>
                 <button
                   onClick={handleCheckout}
-                  className="flex w-full items-center justify-center gap-2 rounded bg-accent py-3 font-body font-medium tracking-wide text-accent-foreground transition-opacity hover:opacity-90"
+                  className="flex w-full items-center justify-center gap-2 rounded bg-accent py-3 font-body font-medium tracking-wide text-accent-foreground transition-all hover:-translate-y-0.5 hover:bg-foreground hover:text-background hover:shadow-[0_12px_24px_rgba(15,15,16,0.14)]"
                 >
                   <CreditCard size={18} />
                   Checkout

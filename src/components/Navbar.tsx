@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
-import { ShoppingBag, Menu, X, Search } from "lucide-react";
+import { MessageCircle, Menu, Search, X } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import { useCart } from "@/context/CartContext";
+import { AnimatePresence, motion } from "framer-motion";
 import { useSales } from "@/context/SalesContext";
+import { ORDER_WHATSAPP_MESSAGE, WHATSAPP_NUMBER } from "@/lib/contact";
+import BrandWordmark from "./BrandWordmark";
 import SearchDialog from "./SearchDialog";
-import logo from "@/assets/logo.png";
 
 const Navbar = () => {
-  const { setIsOpen, itemCount } = useCart();
   const { isLive } = useSales();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
@@ -49,15 +48,11 @@ const Navbar = () => {
     <motion.nav
       animate={{ y: hidden ? "-100%" : "0%" }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
-      className="fixed top-0 left-0 right-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-sm"
+      className="fixed top-0 left-0 right-0 z-50 border-b border-border/50 bg-background/85 backdrop-blur-sm"
     >
       <div className="container mx-auto flex h-20 items-center justify-between px-4 lg:h-24 lg:px-8">
         <Link to="/" className="flex items-center lg:-ml-4">
-          <img
-            src={logo}
-            alt="Dees_ponytails"
-            className="h-400 w-auto object-contain sm:h-0 lg:h-28 xl:h-32"
-          />
+          <BrandWordmark compact />
         </Link>
 
         <div className="hidden items-center gap-8 md:flex">
@@ -84,18 +79,15 @@ const Navbar = () => {
           >
             <Search size={20} />
           </button>
-          <button
-            onClick={() => setIsOpen(true)}
-            className="relative p-2 text-foreground transition-colors hover:text-accent"
-            aria-label="Open cart"
+          <a
+            href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(ORDER_WHATSAPP_MESSAGE)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden items-center gap-2 rounded-full bg-accent px-4 py-2 font-body text-xs uppercase tracking-[0.18em] text-accent-foreground transition-all hover:-translate-y-0.5 hover:bg-foreground hover:text-background hover:shadow-[0_12px_24px_rgba(15,15,16,0.14)] md:inline-flex"
           >
-            <ShoppingBag size={22} />
-            {itemCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-accent text-xs font-medium text-accent-foreground">
-                {itemCount}
-              </span>
-            )}
-          </button>
+            <MessageCircle size={15} />
+            Custom Order
+          </a>
 
           <button
             onClick={() => setMobileOpen((current) => !current)}
@@ -129,11 +121,17 @@ const Navbar = () => {
                   }`}
                 >
                   <span>{link.label}</span>
-                  <span className="text-xs tracking-normal">
-                    {location.pathname === link.href ? "•" : "+"}
-                  </span>
+                  <span className="text-xs tracking-normal">{location.pathname === link.href ? "*" : "+"}</span>
                 </Link>
               ))}
+              <a
+                href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(ORDER_WHATSAPP_MESSAGE)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-2 flex items-center justify-center rounded-xl bg-accent px-4 py-3 font-body text-sm uppercase tracking-[0.2em] text-accent-foreground transition-colors hover:bg-foreground hover:text-background"
+              >
+                Custom Order
+              </a>
             </div>
           </motion.div>
         )}

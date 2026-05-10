@@ -1,6 +1,6 @@
-# Dees_ponytails Backend
+# LOUIES Backend
 
-Backend API for the Dees_ponytails store.
+Backend API for the LOUIES yarn art store.
 
 Stack:
 

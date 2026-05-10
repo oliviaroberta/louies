@@ -28,8 +28,8 @@ const ShopSection = () => {
     return [
       {
         key: "all",
-        label: "All Ponytails",
-        description: "Browse the full Dees_ponytails collection.",
+        label: "All Pieces",
+        description: "Browse the full LOUIES yarn art collection.",
       },
       ...uniqueCategories.map((category) => ({
         key: normalizeCategoryKey(category),
@@ -115,10 +115,10 @@ const ShopSection = () => {
             Collection
           </p>
           <h2 className="font-display text-4xl font-light text-foreground md:text-5xl">
-            Our <span className="font-semibold italic">Ponytails</span>
+            Our <span className="font-semibold italic">Pieces</span>
           </h2>
           <p className="mx-auto mt-4 max-w-2xl font-body text-sm leading-relaxed text-muted-foreground">
-            Shop by category to find the type you are looking for faster.
+            Shop by category to find the piece that fits your room, gift idea, or custom brief.
           </p>
         </motion.div>
 

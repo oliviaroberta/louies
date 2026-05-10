@@ -74,7 +74,7 @@ const AdminDashboard = () => {
           {products.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-border/70 bg-background/60 p-8 text-center">
               <p className="font-body text-sm text-muted-foreground">
-                No products yet. Start by adding your first ponytail.
+                No products yet. Start by adding your first yarn art piece.
               </p>
               <Link
                 to="/admin/products/new"

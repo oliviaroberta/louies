@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500;6..96,600;6..96,700&family=Sora:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,43 +6,43 @@
 
 @layer base {
   :root {
-    --background: 30 25% 96%;
-    --foreground: 25 20% 15%;
+    --background: 0 0% 98%;
+    --foreground: 0 0% 7%;
 
-    --card: 30 20% 97%;
-    --card-foreground: 25 20% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 7%;
 
-    --popover: 30 20% 97%;
-    --popover-foreground: 25 20% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 7%;
 
-    --primary: 25 30% 30%;
-    --primary-foreground: 30 25% 96%;
+    --primary: 0 0% 7%;
+    --primary-foreground: 0 0% 98%;
 
-    --secondary: 30 18% 90%;
-    --secondary-foreground: 25 20% 20%;
+    --secondary: 0 0% 94%;
+    --secondary-foreground: 0 0% 10%;
 
-    --muted: 30 15% 92%;
-    --muted-foreground: 25 10% 45%;
+    --muted: 0 0% 95%;
+    --muted-foreground: 0 0% 39%;
 
-    --accent: 28 35% 42%;
-    --accent-foreground: 30 25% 96%;
+    --accent: 43 63% 56%;
+    --accent-foreground: 0 0% 7%;
 
     --destructive: 0 60% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 30 15% 85%;
-    --input: 30 15% 85%;
-    --ring: 25 30% 30%;
+    --border: 0 0% 84%;
+    --input: 0 0% 84%;
+    --ring: 43 63% 56%;
 
     --radius: 0.375rem;
 
-    --cream: 35 30% 94%;
-    --nude: 25 20% 88%;
-    --warm-brown: 25 25% 35%;
-    --soft-beige: 30 20% 92%;
+    --cream: 48 33% 97%;
+    --nude: 43 28% 88%;
+    --warm-brown: 39 26% 32%;
+    --soft-beige: 44 28% 92%;
 
-    --font-display: 'Cormorant Garamond', serif;
-    --font-body: 'Jost', sans-serif;
+    --font-display: 'Bodoni Moda', serif;
+    --font-body: 'Sora', sans-serif;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -65,6 +65,10 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-body);
+    background-image:
+      radial-gradient(circle at top right, rgba(212, 175, 55, 0.08), transparent 18%),
+      radial-gradient(circle at bottom left, rgba(15, 15, 16, 0.08), transparent 26%),
+      linear-gradient(180deg, #ffffff 0%, #fbfaf6 52%, #ffffff 100%);
   }
 
   html, body, #root {
@@ -92,17 +96,27 @@
     background: transparent;
   }
 
+  .mono-page {
+    background:
+      radial-gradient(circle at top right, rgba(212, 175, 55, 0.1), transparent 18%),
+      radial-gradient(circle at bottom left, rgba(15, 15, 16, 0.08), transparent 28%),
+      linear-gradient(180deg, #ffffff 0%, #fbfaf6 48%, #ffffff 100%);
+  }
+
   .cta-lift {
     transition:
       transform 240ms ease,
       box-shadow 240ms ease,
-      opacity 240ms ease,
+      border-color 240ms ease,
       background-color 240ms ease,
-      color 240ms ease;
+      color 240ms ease,
+      filter 240ms ease;
   }
 
   .cta-lift:hover {
     transform: translateY(-2px);
+    box-shadow: 0 16px 35px rgba(15, 15, 16, 0.16);
+    filter: saturate(1.04);
   }
 
   .animate-soft-bob {

@@ -1,6 +1,6 @@
-# Dees_ponytails
+# LOUIES
 
-Dees_ponytails is a full-stack ponytail extensions store built with:
+LOUIES is a full-stack yarn art storefront and admin platform built with:
 
 - `React + Vite + TypeScript` for the storefront and admin dashboard
 - `Express + TypeScript + Sequelize + PostgreSQL` for the backend
@@ -21,8 +21,8 @@ Main features:
 
 - customer storefront
 - product details pages
-- cart and checkout
-- collections, sales, reviews, and editable homepage sections
+- inquiry-led ordering flow
+- collections, sales, and editable homepage sections
 - admin dashboard for products, sales, orders, reviews, and settings
 
 ### Frontend setup

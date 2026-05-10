@@ -69,7 +69,7 @@ const resolveCategory = async ({
   }
 
   const inferredCategory = await inferCategoryFromName(name, excludeId);
-  return inferredCategory ?? "Ponytails";
+  return inferredCategory ?? "Yarn Art";
 };
 
 const normalizeOptionalVideo = (video?: string | null) => {

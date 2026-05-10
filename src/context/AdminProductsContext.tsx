@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { API_BASE_URL, apiRequest } from "@/lib/api";
+import { seedProducts } from "@/data/products";
+import { PREVIEW_MODE } from "@/lib/preview";
 import { slugify } from "@/lib/strings";
 import type { CatalogProduct, CatalogProductInput } from "@/types/product";
 import { useAuth } from "./AuthContext";
@@ -41,6 +43,12 @@ const AdminProductsContext = createContext<AdminProductsContextType | undefined>
 let productsCache: CatalogProduct[] | null = null;
 let productsRequest: Promise<CatalogProduct[]> | null = null;
 const BACKEND_BASE_URL = API_BASE_URL.replace(/\/api$/, "");
+
+const previewProducts: CatalogProduct[] = seedProducts.map((product) => ({
+  id: slugify(product.name),
+  ...product,
+  video: product.video ?? null,
+}));
 
 const toFrontendStatus = (status: BackendProduct["status"]) =>
   status === "IN_STOCK" ? "inStock" : "outOfStock";
@@ -103,6 +111,10 @@ const mapProduct = (product: BackendProduct): CatalogProduct => ({
 });
 
 const fetchProducts = async () => {
+  if (PREVIEW_MODE) {
+    return previewProducts;
+  }
+
   if (productsCache) {
     return productsCache;
   }

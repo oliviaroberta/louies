@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import { env } from "../config/env.js";
 import { AppError } from "./app-error.js";
 
-const CLOUDINARY_FOLDER = env.CLOUDINARY_UPLOAD_FOLDER || "dees-ponytails/products";
+const CLOUDINARY_FOLDER = env.CLOUDINARY_UPLOAD_FOLDER || "louies/products";
 
 export const isCloudinaryConfigured = () =>
   !!env.CLOUDINARY_CLOUD_NAME && !!env.CLOUDINARY_API_KEY && !!env.CLOUDINARY_API_SECRET;

@@ -144,7 +144,7 @@ const ProductDetailDialog = ({ product, open, onOpenChange }: Props) => {
             <div className="mt-6 flex flex-col gap-2 pt-2 sm:flex-row">
               <button
                 onClick={handleAdd}
-                className="flex flex-1 items-center justify-center gap-2 rounded border border-foreground px-5 py-3 font-body text-sm tracking-wide text-foreground transition-colors hover:bg-foreground hover:text-background"
+                className="flex flex-1 items-center justify-center gap-2 rounded border border-accent bg-accent px-5 py-3 font-body text-sm tracking-wide text-accent-foreground transition-colors hover:border-foreground hover:bg-foreground hover:text-background"
               >
                 <ShoppingBag size={16} /> Add to Cart
               </button>

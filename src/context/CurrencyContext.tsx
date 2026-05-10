@@ -16,7 +16,7 @@ interface CurrencyContextType {
   currencyOptions: CurrencyOption[];
 }
 
-const STORAGE_KEY = "dees_currency";
+const STORAGE_KEY = "louies_currency";
 
 const currencyOptions: CurrencyOption[] = [
   { code: "GHS", label: "Ghana Cedi", rate: 1, locale: "en-GH" },

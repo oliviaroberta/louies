@@ -43,7 +43,7 @@ const SearchDialog = ({ open, onOpenChange }: Props) => {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-xl overflow-hidden p-0">
         <DialogHeader className="border-b border-border px-5 pb-3 pt-5">
-          <DialogTitle className="font-display text-lg">Search Ponytails</DialogTitle>
+          <DialogTitle className="font-display text-lg">Search Pieces</DialogTitle>
         </DialogHeader>
         <div className="p-5 pt-3">
           <div className="relative mb-4">
@@ -55,7 +55,7 @@ const SearchDialog = ({ open, onOpenChange }: Props) => {
               autoFocus
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search by name, texture, style..."
+              placeholder="Search by name, category, or style..."
               className="pl-9 font-body"
             />
           </div>

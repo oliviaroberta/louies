@@ -277,7 +277,7 @@ const AdminGallery = () => {
 
                     <div>
                       <p className="font-display text-xl font-semibold text-foreground">
-                        {item.customerName || "Dees_ponytails Client"}
+                        {item.customerName || "LOUIES Client"}
                       </p>
                       {item.caption ? (
                         <p className="mt-1 font-body text-sm leading-relaxed text-muted-foreground">

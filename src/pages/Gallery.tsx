@@ -2,8 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 import Navbar from "@/components/Navbar";
 import CartDrawer from "@/components/CartDrawer";
 import Footer from "@/components/Footer";
-import backgroundImage from "@/assets/background.jpg";
+import { previewGalleryItems } from "@/data/gallery";
 import { apiRequest } from "@/lib/api";
+import { PREVIEW_MODE } from "@/lib/preview";
 import type { GalleryItem } from "@/types/gallery";
 import PaginationControls from "@/components/PaginationControls";
 
@@ -20,6 +21,14 @@ const Gallery = () => {
 
     const load = async () => {
       setIsLoading(true);
+      if (PREVIEW_MODE) {
+        if (isMounted) {
+          setItems(previewGalleryItems);
+          setIsLoading(false);
+        }
+        return;
+      }
+
       try {
         const response = await apiRequest<{ items: GalleryItem[] }>("/gallery");
         if (isMounted) {
@@ -67,15 +76,7 @@ const Gallery = () => {
   }, [currentPage, totalPages]);
 
   return (
-    <div
-      className="relative min-h-screen bg-scroll lg:bg-fixed"
-      style={{
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
-    >
-      <div className="absolute inset-0 bg-background/72" />
+    <div className="mono-page relative min-h-screen">
       <div className="relative z-10">
         <Navbar />
         <CartDrawer />
@@ -83,14 +84,14 @@ const Gallery = () => {
         <main className="container mx-auto px-4 pb-20 pt-28 lg:px-8">
           <section className="rounded-[2rem] border border-border/60 bg-card/85 px-6 py-10 text-center backdrop-blur md:px-10">
             <p className="font-body text-sm uppercase tracking-[0.3em] text-muted-foreground">
-              Client Gallery
+              Gallery
             </p>
             <h1 className="mt-4 font-display text-4xl font-light text-foreground md:text-5xl">
-              Real Looks, Real <span className="font-semibold italic">Customers</span>
+              Real Pieces, Real <span className="font-semibold italic">Styling</span>
             </h1>
             <p className="mx-auto mt-4 max-w-2xl font-body text-sm leading-relaxed text-muted-foreground">
-              A closer look at ponytails worn by our clients. Browse photos and videos uploaded by
-              Dees_ponytails from customer submissions.
+              A closer look at LOUIES creations, installations, and client styling moments. Browse
+              photos and videos published from completed pieces and custom orders.
             </p>
 
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
@@ -155,7 +156,7 @@ const Gallery = () => {
                     <div className="space-y-2 p-5">
                       <div className="flex items-center justify-between gap-3">
                         <p className="font-display text-xl font-semibold text-foreground">
-                          {item.customerName || "Dees_ponytails Client"}
+                          {item.customerName || "LOUIES Client"}
                         </p>
                         <span className="rounded-full border border-border px-3 py-1 font-body text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
                           {item.mediaType === "VIDEO" ? "Video" : "Photo"}

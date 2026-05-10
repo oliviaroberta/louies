@@ -23,7 +23,7 @@ interface AuthContextType extends AuthState {
   changePassword: (payload: { currentPassword: string; newPassword: string }) => Promise<void>;
 }
 
-const STORAGE_KEY = "dees_admin_auth";
+const STORAGE_KEY = "louies_admin_auth";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 

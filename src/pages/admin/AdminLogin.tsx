@@ -26,7 +26,7 @@ const AdminLogin = () => {
             <Store size={24} />
           </div>
           <p className="mt-4 font-body text-[11px] uppercase tracking-[0.24em] text-muted-foreground">
-            Dees_ponytails Admin
+            LOUIES Admin
           </p>
           <h1 className="mt-2 font-display text-3xl font-semibold text-foreground">Sign In</h1>
           <p className="mt-2 font-body text-sm text-muted-foreground">

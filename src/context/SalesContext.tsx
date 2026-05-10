@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { apiRequest } from "@/lib/api";
+import { PREVIEW_MODE } from "@/lib/preview";
 import { useAuth } from "./AuthContext";
 
 export interface SaleItem {
@@ -27,7 +28,7 @@ interface SalesContextType {
 const defaultSales: SalesContent = {
   enabled: false,
   title: "Sales",
-  description: "Limited-time ponytail offers selected by Dees_ponytails.",
+  description: "Limited-time LOUIES offers on selected yarn art pieces.",
   saleItems: [],
 };
 
@@ -56,6 +57,10 @@ const normalizeSales = (
 });
 
 const fetchSales = async () => {
+  if (PREVIEW_MODE) {
+    return defaultSales;
+  }
+
   if (salesCache) {
     return salesCache;
   }

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { apiRequest } from "@/lib/api";
+import { PREVIEW_MODE } from "@/lib/preview";
 import { useAuth } from "./AuthContext";
 
 export interface HeroContent {
@@ -50,63 +51,96 @@ interface SiteContentContextType {
 
 const defaultContent: SiteContent = {
   hero: {
-    eyebrow: "Premium Ponytail Extensions",
-    titleLine1: "Luxury Hair That Moves",
-    titleHighlight: "With You",
+    eyebrow: "Custom Yarn Art",
+    titleLine1: "Statement Pieces",
+    titleHighlight: "Made Personal",
     description:
-      "Soft, reusable ponytail extensions designed for elegant everyday glam, birthdays, events, and effortless styling.",
-    ctaLabel: "Shop Ponytails",
+      "Bold black, white, and gold yarn art for modern rooms, gifting, and custom moments.",
+    ctaLabel: "Shop Collection",
   },
   howItWorks: {
-    eyebrow: "Simple Process",
-    title: "How It",
+    eyebrow: "How To Order",
+    title: "How LOUIES",
     titleHighlight: "Works",
     steps: [
       {
         num: "01",
-        title: "Browse",
-        text: "Explore our collection and look through the ponytail styles, textures, and lengths available.",
+        title: "Browse Pieces",
+        text: "Explore the collection and shortlist the yarn art styles that fit your space, mood, or gift idea.",
       },
       {
         num: "02",
-        title: "Choose",
-        text: "Pick the ponytail you want and continue the order process directly on the website.",
+        title: "Message Your Brief",
+        text: "Send us your favorite piece, preferred size, colors, and any custom note on WhatsApp.",
       },
       {
         num: "03",
-        title: "Pay via MoMo",
-        text: "Make your payment securely on the website through Mobile Money.",
+        title: "Confirm & Pay",
+        text: "We confirm the final details, then you pay by Mobile Money or card before production or delivery.",
       },
     ],
   },
   about: {
     eyebrow: "About Us",
     title: "The",
-    titleHighlight: "Dees_ponytails Promise",
+    titleHighlight: "LOUIES Difference",
     description:
-      "We believe every woman deserves to feel confident and beautiful. Our ponytail extensions are sourced for quality, designed for comfort, and styled for impact so you can slay effortlessly, every single day.",
+      "LOUIES is a yarn art brand built around statement-making decor with a clean, fashion-aware edge. Every piece is designed to feel personal, elevated, and expressive.",
     features: [
       {
-        title: "Premium Quality",
-        text: "Handpicked, high-grade hair that looks and feels natural.",
+        title: "Design-Led",
+        text: "Every piece is shaped with a strong visual direction instead of generic craft styling.",
       },
       {
-        title: "Made with Love",
-        text: "Each ponytail is carefully crafted for a flawless, secure fit.",
+        title: "Custom-Friendly",
+        text: "You can adjust colors, names, sizes, and details to suit your exact brief.",
       },
       {
-        title: "Trusted by 500+",
-        text: "Loved by women across Ghana who trust Dees_ponytails for their glam.",
+        title: "Gift Worthy",
+        text: "Made for memorable gifting, room upgrades, launches, and personal keepsakes.",
       },
     ],
   },
 };
+
+const hasLegacyBranding = (value: unknown) =>
+  typeof value === "string" && /(dees|ponytail|ponytails|hair|glam)/i.test(value);
+
+const sectionHasLegacyBranding = (section: unknown) => {
+  if (!section || typeof section !== "object") {
+    return false;
+  }
+
+  return Object.values(section).some((value) => {
+    if (Array.isArray(value)) {
+      return value.some((item) => sectionHasLegacyBranding(item));
+    }
+
+    if (value && typeof value === "object") {
+      return sectionHasLegacyBranding(value);
+    }
+
+    return hasLegacyBranding(value);
+  });
+};
+
+const sanitizeSiteContent = (content: SiteContent): SiteContent => ({
+  hero: sectionHasLegacyBranding(content.hero) ? defaultContent.hero : content.hero,
+  howItWorks: sectionHasLegacyBranding(content.howItWorks)
+    ? defaultContent.howItWorks
+    : content.howItWorks,
+  about: sectionHasLegacyBranding(content.about) ? defaultContent.about : content.about,
+});
 
 const SiteContentContext = createContext<SiteContentContextType | undefined>(undefined);
 let siteContentCache: SiteContent | null = null;
 let siteContentRequest: Promise<SiteContent> | null = null;
 
 const fetchSiteContent = async () => {
+  if (PREVIEW_MODE) {
+    return defaultContent;
+  }
+
   if (siteContentCache) {
     return siteContentCache;
   }
@@ -114,8 +148,9 @@ const fetchSiteContent = async () => {
   if (!siteContentRequest) {
     siteContentRequest = apiRequest<{ item: { content: SiteContent } }>("/site-content")
       .then((response) => {
-        siteContentCache = response.item.content;
-        return response.item.content;
+        const sanitized = sanitizeSiteContent(response.item.content);
+        siteContentCache = sanitized;
+        return sanitized;
       })
       .finally(() => {
         siteContentRequest = null;
@@ -182,8 +217,9 @@ export const SiteContentProvider = ({ children }: { children: React.ReactNode })
       body: JSON.stringify(nextContent),
     });
 
-    siteContentCache = response.item.content;
-    setContent(response.item.content);
+    const sanitized = sanitizeSiteContent(response.item.content);
+    siteContentCache = sanitized;
+    setContent(sanitized);
   };
 
   const value = useMemo<SiteContentContextType>(

@@ -92,10 +92,10 @@ const FeaturedProducts = () => {
           className="mb-14 text-center"
         >
           <p className="mb-3 font-body text-sm uppercase tracking-[0.3em] text-muted-foreground">
-            Bestsellers
+            Featured Collection
           </p>
           <h2 className="font-display text-4xl font-light text-foreground md:text-5xl">
-            Our <span className="font-semibold italic">Favourites</span>
+            Most <span className="font-semibold italic">Wanted</span>
           </h2>
         </motion.div>
 
@@ -116,9 +116,9 @@ const FeaturedProducts = () => {
         <div className="text-center">
           <Link
             to="/shop"
-            className="cta-lift inline-block rounded border border-foreground px-10 py-3.5 font-body text-sm uppercase tracking-wider text-foreground transition-colors hover:bg-foreground hover:text-background"
+            className="cta-lift inline-block rounded border border-accent bg-accent px-10 py-3.5 font-body text-sm uppercase tracking-wider text-accent-foreground transition-colors hover:border-foreground hover:bg-foreground hover:text-background"
           >
-            View All Ponytails
+            View All Pieces
           </Link>
         </div>
       </div>

@@ -1,5 +1,5 @@
 import { useLocation } from "react-router-dom";
-import { SUPPORT_WHATSAPP_MESSAGE, WHATSAPP_NUMBER } from "@/lib/contact";
+import { BRAND_NAME, SUPPORT_WHATSAPP_MESSAGE, WHATSAPP_NUMBER } from "@/lib/contact";
 
 const FloatingWhatsApp = () => {
   const { pathname } = useLocation();
@@ -13,7 +13,7 @@ const FloatingWhatsApp = () => {
       href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(SUPPORT_WHATSAPP_MESSAGE)}`}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="Chat with us on WhatsApp"
+      aria-label={`Chat with ${BRAND_NAME} on WhatsApp`}
       className="animate-soft-bob animate-soft-pulse fixed bottom-5 right-4 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white transition-transform duration-300 hover:scale-105 hover:bg-[#1fbc59] sm:bottom-6 sm:right-6"
     >
       <svg

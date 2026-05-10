@@ -14,7 +14,7 @@ const apiRouter = Router();
 apiRouter.get("/health", (_req, res) => {
   res.json({
     status: "ok",
-    service: "dees-ponytails-backend",
+    service: "louies-backend",
   });
 });
 

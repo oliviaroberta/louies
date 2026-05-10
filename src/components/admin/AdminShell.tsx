@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { LayoutDashboard, Package, PlusCircle, BadgePercent, ClipboardList, MessageSquareQuote, Settings, Store, Menu, X, Images } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
-import backgroundImage from "@/assets/background.jpg";
 import { useAuth } from "@/context/AuthContext";
 
 const navItems = [
@@ -34,16 +33,7 @@ const AdminShell = ({
   const { admin, logout } = useAuth();
 
   return (
-    <div
-      className="relative min-h-screen"
-      style={{
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundAttachment: "fixed",
-      }}
-    >
-      <div className="absolute inset-0 bg-background/88" />
+    <div className="mono-page relative min-h-screen">
       <div className="relative z-10">
         <header className="sticky top-0 z-20 border-b border-border/60 bg-background/90 backdrop-blur-md">
           <div className="container mx-auto px-4 py-4 lg:px-8">
@@ -54,7 +44,7 @@ const AdminShell = ({
                 </div>
                 <div>
                   <p className="font-body text-[11px] uppercase tracking-[0.26em] text-muted-foreground">
-                    Dees_ponytails Admin
+                    LOUIES Admin
                   </p>
                   <p className="mt-1 font-display text-2xl font-semibold text-foreground">
                     Store Control Panel

@@ -1,27 +1,22 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { CreditCard, ShoppingBag, Star } from "lucide-react";
+import { MessageCircle } from "lucide-react";
+import { Link, useParams } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import CartDrawer from "@/components/CartDrawer";
 import Footer from "@/components/Footer";
 import PageBackButton from "@/components/PageBackButton";
-import backgroundImage from "@/assets/background.jpg";
+import ProductImageBadges from "@/components/ProductImageBadges";
 import { useAdminProducts } from "@/context/AdminProductsContext";
-import { useCart } from "@/context/CartContext";
 import { useCurrency } from "@/context/CurrencyContext";
 import { useSales } from "@/context/SalesContext";
-import { apiRequest } from "@/lib/api";
+import { buildProductInquiryMessage, WHATSAPP_NUMBER } from "@/lib/contact";
 import { getProductImage } from "@/lib/productImages";
 import { parseProductOptions } from "@/lib/productOptions";
 import type { CatalogProduct } from "@/types/product";
-import type { StoreReview } from "@/types/review";
-import ProductImageBadges from "@/components/ProductImageBadges";
 
 const ProductDetails = () => {
   const { id = "" } = useParams();
-  const navigate = useNavigate();
   const { products } = useAdminProducts();
-  const { addItem, setIsOpen } = useCart();
   const { formatPrice, currency } = useCurrency();
   const { getSalePrice } = useSales();
 
@@ -29,7 +24,7 @@ const ProductDetails = () => {
   const relatedProducts = useMemo(() => {
     if (!product) return [];
 
-    const sameTexture = products.filter(
+    const sameStyle = products.filter(
       (item) => item.id !== product.id && item.textureStyle === product.textureStyle,
     );
     const sameCategory = products.filter(
@@ -45,10 +40,10 @@ const ProductDetails = () => {
         item.category !== product.category,
     );
 
-    return [...sameTexture, ...sameCategory, ...remaining].slice(0, 3);
+    return [...sameStyle, ...sameCategory, ...remaining].slice(0, 3);
   }, [product, products]);
 
-  const lengthOptions = useMemo(() => {
+  const sizeOptions = useMemo(() => {
     if (!product) return [];
     const parsed = parseProductOptions(product.length);
     return parsed.length > 0 ? parsed : ["Standard"];
@@ -57,66 +52,16 @@ const ProductDetails = () => {
   const colorOptions = useMemo(() => {
     if (!product) return [];
     const parsed = parseProductOptions(product.color);
-    return parsed.length > 0 ? parsed : ["Natural Black"];
+    return parsed.length > 0 ? parsed : ["Custom palette"];
   }, [product]);
 
-  const [selectedLength, setSelectedLength] = useState("");
+  const [selectedSize, setSelectedSize] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
-  const [reviews, setReviews] = useState<StoreReview[]>([]);
-  const [isLoadingReviews, setIsLoadingReviews] = useState(true);
-  const [reviewForm, setReviewForm] = useState({
-    customerName: "",
-    rating: "5",
-    text: "",
-  });
-  const [reviewState, setReviewState] = useState<{
-    isSubmitting: boolean;
-    error: string | null;
-    success: string | null;
-  }>({
-    isSubmitting: false,
-    error: null,
-    success: null,
-  });
 
   useEffect(() => {
-    setSelectedLength(lengthOptions[0] ?? "");
+    setSelectedSize(sizeOptions[0] ?? "");
     setSelectedColor(colorOptions[0] ?? "");
-  }, [lengthOptions, colorOptions, id]);
-
-  useEffect(() => {
-    if (!product) {
-      setReviews([]);
-      setIsLoadingReviews(false);
-      return;
-    }
-
-    let isMounted = true;
-    setIsLoadingReviews(true);
-
-    const loadReviews = async () => {
-      try {
-        const response = await apiRequest<{ items: StoreReview[] }>(
-          `/reviews?productId=${product.id}&status=APPROVED`,
-        );
-        if (!isMounted) return;
-        setReviews(response.items);
-      } catch {
-        if (!isMounted) return;
-        setReviews([]);
-      } finally {
-        if (isMounted) {
-          setIsLoadingReviews(false);
-        }
-      }
-    };
-
-    void loadReviews();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [product]);
+  }, [sizeOptions, colorOptions, id]);
 
   if (!product) {
     return (
@@ -126,7 +71,7 @@ const ProductDetails = () => {
           <div className="mt-8 rounded-2xl border border-border/60 bg-card/85 p-10 text-center backdrop-blur">
             <h1 className="font-display text-3xl font-semibold text-foreground">Product not found</h1>
             <p className="mt-3 font-body text-sm text-muted-foreground">
-              The product you are looking for does not exist.
+              The piece you are looking for does not exist.
             </p>
           </div>
         </div>
@@ -137,64 +82,7 @@ const ProductDetails = () => {
   const resolvedImage = getProductImage(product.name, product.image);
   const salePrice = getSalePrice(product.id, product.price);
   const effectivePrice = salePrice ?? product.price;
-
-  const addCurrentItem = () => {
-    addItem({
-      id: product.id,
-      name: product.name,
-      texture: product.textureStyle,
-      color: selectedColor,
-      length: selectedLength,
-      price: effectivePrice,
-      image: resolvedImage,
-    });
-  };
-
-  const handleBuyNow = () => {
-    addCurrentItem();
-    setIsOpen(false);
-    navigate("/checkout");
-  };
-
-  const submitReview = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!product) return;
-
-    setReviewState({
-      isSubmitting: true,
-      error: null,
-      success: null,
-    });
-
-    try {
-      await apiRequest<{ message: string }>("/reviews", {
-        method: "POST",
-        body: JSON.stringify({
-          productId: product.id,
-          customerName: reviewForm.customerName,
-          rating: Number(reviewForm.rating),
-          text: reviewForm.text,
-        }),
-      });
-
-      setReviewForm({
-        customerName: "",
-        rating: "5",
-        text: "",
-      });
-      setReviewState({
-        isSubmitting: false,
-        error: null,
-        success: "Review submitted successfully. It will appear after admin approval.",
-      });
-    } catch (error) {
-      setReviewState({
-        isSubmitting: false,
-        error: error instanceof Error ? error.message : "Failed to submit review",
-        success: null,
-      });
-    }
-  };
+  const inquiryMessage = `${buildProductInquiryMessage(product.name)} Size: ${selectedSize || "Standard"}. Colorway: ${selectedColor || "Custom palette"}.`;
 
   return (
     <PageShell>
@@ -237,7 +125,7 @@ const ProductDetails = () => {
                       : "bg-secondary text-foreground"
                   }`}
                 >
-                  {product.status === "inStock" ? "In Stock" : "Out of Stock"}
+                  {product.status === "inStock" ? "Available" : "Made to order"}
                 </span>
                 <span className="rounded-full border border-border px-3 py-1.5 font-body text-xs text-muted-foreground">
                   {product.category}
@@ -261,10 +149,13 @@ const ProductDetails = () => {
                   </p>
                 ) : null}
                 <p className="mt-1 font-body text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
-                  {salePrice ? "Sale Price" : "Price"}
+                  Starting Price
                 </p>
                 <p className={`font-display text-3xl font-semibold ${salePrice ? "text-accent" : "text-foreground"}`}>
                   {formatPrice(effectivePrice)}
+                </p>
+                <p className="mt-2 font-body text-xs text-muted-foreground">
+                  Final price can change if your customization requires a different size, finish, or complexity.
                 </p>
                 {currency !== "GHS" ? (
                   <p className="mt-2 font-body text-xs text-muted-foreground">
@@ -273,8 +164,8 @@ const ProductDetails = () => {
                 ) : null}
               </div>
 
-              <OptionGroup label="Length" options={lengthOptions} selected={selectedLength} onSelect={setSelectedLength} />
-              <OptionGroup label="Colour" options={colorOptions} selected={selectedColor} onSelect={setSelectedColor} />
+              <OptionGroup label="Size" options={sizeOptions} selected={selectedSize} onSelect={setSelectedSize} />
+              <OptionGroup label="Colorway" options={colorOptions} selected={selectedColor} onSelect={setSelectedColor} />
 
               <div className="mb-8 rounded-2xl border border-border/60 bg-background/60 p-5">
                 <p className="mb-2 font-body text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
@@ -285,143 +176,27 @@ const ProductDetails = () => {
                 </p>
               </div>
 
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <button
-                  onClick={addCurrentItem}
-                  className="flex flex-1 items-center justify-center gap-2 rounded border border-foreground px-5 py-3 font-body text-sm tracking-wide text-foreground transition-colors hover:bg-foreground hover:text-background"
-                >
-                  <ShoppingBag size={16} />
-                  Add to Cart
-                </button>
-                <button
-                  onClick={handleBuyNow}
-                  className="flex flex-1 items-center justify-center gap-2 rounded bg-accent px-5 py-3 font-body text-sm tracking-wide text-accent-foreground transition-opacity hover:opacity-90"
-                >
-                  <CreditCard size={16} />
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="mt-12 rounded-[2rem] border border-border/60 bg-card/85 p-6 backdrop-blur md:p-8">
-          <div className="mb-8 text-center">
-            <p className="mb-3 font-body text-sm uppercase tracking-[0.3em] text-muted-foreground">
-              Customer Reviews
-            </p>
-            <h2 className="font-display text-3xl font-light text-foreground md:text-4xl">
-              Reviews For This <span className="font-semibold italic">Style</span>
-            </h2>
-          </div>
-
-          <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-            <div>
-              {isLoadingReviews ? (
-                <div className="rounded-2xl border border-border/60 bg-background/60 p-6 text-center">
-                  <p className="font-body text-sm text-muted-foreground">Loading reviews...</p>
-                </div>
-              ) : reviews.length === 0 ? (
-                <div className="rounded-2xl border border-border/60 bg-background/60 p-6 text-center">
-                  <p className="font-body text-sm text-muted-foreground">
-                    No approved reviews yet for this ponytail.
+              <div className="grid gap-4 rounded-[1.75rem] border border-accent/30 bg-accent/10 p-5">
+                <div>
+                  <p className="font-body text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+                    Order Flow
+                  </p>
+                  <p className="mt-2 font-body text-sm leading-relaxed text-foreground/85">
+                    This piece is message-first. Send your preferred size and colorway on WhatsApp,
+                    then we confirm availability and payment by Mobile Money or card.
                   </p>
                 </div>
-              ) : (
-                <div className="grid gap-6 md:grid-cols-2">
-                  {reviews.map((review) => (
-                    <div
-                      key={review.id}
-                      className="rounded-2xl border border-border/60 bg-background/60 p-5"
-                    >
-                      <div className="mb-3 flex gap-0.5">
-                        {Array.from({ length: review.rating }).map((_, index) => (
-                          <Star key={index} size={15} className="fill-accent text-accent" />
-                        ))}
-                      </div>
-                      <p className="mb-4 font-body text-sm leading-relaxed text-foreground/85">
-                        "{review.text}"
-                      </p>
-                      <p className="font-display text-sm font-semibold text-muted-foreground">
-                        - {review.customerName}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <form
-              onSubmit={submitReview}
-              className="rounded-2xl border border-border/60 bg-background/60 p-5"
-            >
-              <h3 className="font-display text-2xl font-semibold text-foreground">
-                Leave a Review
-              </h3>
-              <p className="mt-2 font-body text-sm text-muted-foreground">
-                Share your experience. Reviews go live after admin approval.
-              </p>
-
-              <div className="mt-5 space-y-4">
-                <ReviewField
-                  label="Your Name"
-                  value={reviewForm.customerName}
-                  onChange={(value) =>
-                    setReviewForm((current) => ({ ...current, customerName: value }))
-                  }
-                />
-                <div>
-                  <label className="mb-1.5 block font-body text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                    Rating
-                  </label>
-                  <select
-                    value={reviewForm.rating}
-                    onChange={(event) =>
-                      setReviewForm((current) => ({ ...current, rating: event.target.value }))
-                    }
-                    className="w-full rounded-2xl border border-border bg-background px-4 py-3 font-body text-sm text-foreground transition-colors focus:border-foreground focus:outline-none"
-                  >
-                    {[5, 4, 3, 2, 1].map((value) => (
-                      <option key={value} value={String(value)}>
-                        {value} Star{value === 1 ? "" : "s"}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="mb-1.5 block font-body text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                    Review
-                  </label>
-                  <textarea
-                    rows={5}
-                    value={reviewForm.text}
-                    onChange={(event) =>
-                      setReviewForm((current) => ({ ...current, text: event.target.value }))
-                    }
-                    className="w-full rounded-2xl border border-border bg-background px-4 py-3 font-body text-sm text-foreground transition-colors focus:border-foreground focus:outline-none"
-                  />
-                </div>
-
-                {reviewState.error ? (
-                  <div className="rounded-2xl border border-destructive/30 bg-destructive/10 p-3">
-                    <p className="font-body text-sm text-destructive">{reviewState.error}</p>
-                  </div>
-                ) : null}
-                {reviewState.success ? (
-                  <div className="rounded-2xl border border-primary/20 bg-primary/10 p-3">
-                    <p className="font-body text-sm text-foreground">{reviewState.success}</p>
-                  </div>
-                ) : null}
-
-                <button
-                  type="submit"
-                  disabled={reviewState.isSubmitting}
-                  className="w-full rounded bg-primary px-5 py-3 font-body text-sm uppercase tracking-[0.18em] text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
+                <a
+                  href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(inquiryMessage)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 py-3.5 font-body text-sm uppercase tracking-[0.18em] text-accent-foreground transition-all hover:-translate-y-0.5 hover:bg-foreground hover:text-background hover:shadow-[0_12px_24px_rgba(15,15,16,0.14)]"
                 >
-                  {reviewState.isSubmitting ? "Submitting..." : "Submit Review"}
-                </button>
+                  <MessageCircle size={16} />
+                  Request This Piece
+                </a>
               </div>
-            </form>
+            </div>
           </div>
         </section>
 
@@ -432,7 +207,7 @@ const ProductDetails = () => {
                 You May Also Like
               </p>
               <h2 className="font-display text-3xl font-light text-foreground md:text-4xl">
-                More Styles To <span className="font-semibold italic">Explore</span>
+                More Pieces To <span className="font-semibold italic">Explore</span>
               </h2>
             </div>
 
@@ -475,27 +250,27 @@ const RelatedProductCard = ({ product }: { product: CatalogProduct }) => {
         <h3 className="font-display text-xl font-semibold text-foreground">{product.name}</h3>
         <div className="mt-3 flex items-end justify-between gap-4">
           <div>
-          {salePrice ? (
-            <p className="font-body text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
-              Original Price
+            {salePrice ? (
+              <p className="font-body text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+                Original Price
+              </p>
+            ) : null}
+            {salePrice ? (
+              <p className="font-body text-xs text-muted-foreground line-through">
+                {formatPrice(product.price)}
+              </p>
+            ) : null}
+            <p className="mt-1 font-body text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+              Starting Price
             </p>
-          ) : null}
-          {salePrice ? (
-            <p className="font-body text-xs text-muted-foreground line-through">
-              {formatPrice(product.price)}
+            <p className={`font-display text-xl font-semibold ${salePrice ? "text-accent" : "text-foreground"}`}>
+              {formatPrice(effectivePrice)}
             </p>
-          ) : null}
-          <p className="mt-1 font-body text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
-            {salePrice ? "Sale Price" : "Price"}
-          </p>
-          <p className={`font-display text-xl font-semibold ${salePrice ? "text-accent" : "text-foreground"}`}>
-            {formatPrice(effectivePrice)}
-          </p>
-          {currency !== "GHS" ? (
-            <p className="mt-1 font-body text-[11px] text-muted-foreground">
-              Displayed in {currency}
-            </p>
-          ) : null}
+            {currency !== "GHS" ? (
+              <p className="mt-1 font-body text-[11px] text-muted-foreground">
+                Displayed in {currency}
+              </p>
+            ) : null}
           </div>
           <div className="inline-flex items-center gap-1 font-body text-xs uppercase tracking-[0.18em] text-muted-foreground transition-colors group-hover:text-foreground">
             View Details
@@ -507,16 +282,7 @@ const RelatedProductCard = ({ product }: { product: CatalogProduct }) => {
 };
 
 const PageShell = ({ children }: { children: React.ReactNode }) => (
-  <div
-    className="relative min-h-screen"
-    style={{
-      backgroundImage: `url(${backgroundImage})`,
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      backgroundAttachment: "fixed",
-    }}
-  >
-    <div className="absolute inset-0 bg-background/70" />
+  <div className="mono-page relative min-h-screen">
     <div className="relative z-10">
       <Navbar />
       <CartDrawer />
@@ -557,27 +323,6 @@ const OptionGroup = ({
         </button>
       ))}
     </div>
-  </div>
-);
-
-const ReviewField = ({
-  label,
-  value,
-  onChange,
-}: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-}) => (
-  <div>
-    <label className="mb-1.5 block font-body text-xs uppercase tracking-[0.18em] text-muted-foreground">
-      {label}
-    </label>
-    <input
-      value={value}
-      onChange={(event) => onChange(event.target.value)}
-      className="w-full rounded-2xl border border-border bg-background px-4 py-3 font-body text-sm text-foreground transition-colors focus:border-foreground focus:outline-none"
-    />
   </div>
 );
 

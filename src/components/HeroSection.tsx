@@ -1,88 +1,49 @@
-import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import hero1 from "@/assets/hero-group-optimized.jpg";
-import hero2 from "@/assets/product-natural-texture-optimized.jpg";
-import { useSiteContent } from "@/context/SiteContentContext";
 
-const slides = [hero1, hero2];
-
-const HeroSection = () => { 
-  const [index, setIndex] = useState(0);
-  const {
-    content: { hero },
-  } = useSiteContent();
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      setIndex((i) => (i + 1) % slides.length);
-    }, 4500);
-    return () => clearInterval(id);
-  }, []);
-
+const HeroSection = () => {
   return (
-    <section className="section-transparent pb-0 pt-16">
-      <div className="w-full">
-        <div className="relative h-[calc(100svh-4rem-2.75rem)] min-h-[24rem] overflow-hidden md:h-[calc(100svh-4rem-3rem)]">
-          <AnimatePresence mode="wait">
-            <motion.img
-              key={index}
-              src={slides[index]}
-              alt="Premium ponytail extension showcase"
-              width={1600}
-              height={1000}
-              loading={index === 0 ? "eager" : "lazy"}
-              initial={{ opacity: 0, scale: 1.04 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 1.01 }}
-              transition={{ duration: 1.1, ease: "easeInOut" }}
-              className="absolute inset-0 h-full w-full object-cover object-center md:object-contain"
-            />
-          </AnimatePresence>
+    <section className="section-transparent pt-24">
+      <div className="container mx-auto px-4 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mx-auto grid min-h-[calc(100svh-7rem)] max-w-6xl items-center gap-8 lg:grid-cols-[0.9fr_1.1fr]"
+        >
+          <div className="order-2 px-2 text-center lg:order-1 lg:px-6 lg:text-left">
+            <p className="mb-4 font-body text-[11px] uppercase tracking-[0.34em] text-accent">
+              LOUIES STUDIO
+            </p>
+            <h1 className="mx-auto max-w-3xl font-display text-5xl font-semibold leading-[0.92] text-foreground sm:text-6xl lg:mx-0 lg:text-7xl">
+              Custom yarn art
+              <br />
+              <span className="italic text-accent">for modern spaces.</span>
+            </h1>
+            <p className="mx-auto mt-5 max-w-xl font-body text-sm leading-7 text-muted-foreground sm:text-base lg:mx-0">
+              Minimal pieces, personalized details, and a soft neutral palette designed to feel elevated, calm, and intentional.
+            </p>
 
-          <div className="absolute inset-0 bg-black/45" />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/35 to-black/55" />
-
-          <div className="relative z-10 flex h-full items-center justify-center px-6 py-10 text-center md:px-10 lg:px-16">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="max-w-3xl"
-            >
-              <p className="mb-4 font-body text-sm uppercase tracking-[0.3em] text-white/80">
-                {hero.eyebrow}
-              </p>
-              <h1 className="mb-4 font-display text-4xl font-light leading-tight text-white md:text-5xl lg:text-6xl">
-                {hero.titleLine1}
-                <br />
-                <span className="font-semibold">{hero.titleHighlight}</span>
-              </h1>
-              <p className="mx-auto mb-6 max-w-2xl font-body text-base leading-relaxed text-white/85 lg:text-lg">
-                {hero.description}
-              </p>
+            <div className="mt-8">
               <Link
                 to="/shop"
-                className="cta-lift inline-block rounded-sm bg-white px-8 py-3.5 font-body text-sm uppercase tracking-[0.22em] text-foreground transition-all hover:bg-white/92"
+                className="cta-lift inline-flex items-center justify-center border border-accent bg-accent px-8 py-3.5 font-body text-[11px] uppercase tracking-[0.24em] text-accent-foreground hover:border-foreground hover:bg-foreground hover:text-background"
               >
-                {hero.ctaLabel}
+                Shop Collection
               </Link>
-            </motion.div>
+            </div>
           </div>
 
-          <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 gap-2">
-            {slides.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setIndex(i)}
-                aria-label={`Go to slide ${i + 1}`}
-                className={`h-1.5 rounded-full transition-all ${
-                  i === index ? "w-8 bg-white" : "w-2 bg-white/45"
-                }`}
+          <div className="order-1 lg:order-2">
+            <div className="overflow-hidden rounded-[2rem] border border-accent/40 bg-[hsl(var(--cream))] shadow-[0_20px_60px_rgba(15,15,16,0.08)]">
+              <img
+                src="/hero-yarn-reference.jpeg"
+                alt="Yarn bundles in neutral tones for the LOUIES hero section"
+                className="aspect-[4/5] w-full object-cover lg:aspect-[5/6]"
               />
-            ))}
+            </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

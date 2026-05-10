@@ -1,18 +1,23 @@
 import { Link } from "react-router-dom";
 import CurrencySelect from "@/components/CurrencySelect";
 import { useSales } from "@/context/SalesContext";
+import { BRAND_NAME, INSTAGRAM_HANDLE, PHONE_NUMBER_DISPLAY } from "@/lib/contact";
+import BrandWordmark from "./BrandWordmark";
 
 const Footer = () => {
   const { isLive } = useSales();
 
   return (
-    <footer className="section-solid border-t border-border py-8">
+    <footer className="border-t border-accent/35 bg-[hsl(var(--soft-beige))] py-8">
       <div className="container mx-auto px-4 lg:px-8">
         <div className="flex flex-col items-center justify-between gap-6 text-center md:flex-row md:items-start md:text-left">
           <div>
-            <p className="mb-1 font-display text-lg font-semibold text-foreground">Dees_ponytails</p>
+            <BrandWordmark compact className="mb-2" />
             <p className="font-body text-xs text-muted-foreground">
-              Premium ponytail extensions for elegant everyday styling.
+              Custom yarn art with a bold black, white, and gold finish.
+            </p>
+            <p className="mt-2 font-body text-xs text-muted-foreground">
+              {INSTAGRAM_HANDLE} • WhatsApp {PHONE_NUMBER_DISPLAY}
             </p>
           </div>
 
@@ -62,7 +67,7 @@ const Footer = () => {
         </div>
 
         <p className="mt-6 text-center font-body text-xs text-muted-foreground">
-          {"\u00A9"} {new Date().getFullYear()} Dees_ponytails. All rights reserved.
+          {"\u00A9"} {new Date().getFullYear()} {BRAND_NAME}. All rights reserved.
         </p>
       </div>
     </footer>
